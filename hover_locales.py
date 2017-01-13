@@ -71,7 +71,6 @@ class HoverLocales(sublime_plugin.EventListener):
             # Get base project folder
             base_folder = sublime.active_window().folders()[0] + "/config/locales"
 
-
             if (path and path != "" and os.path.isdir(base_folder)):
 
                 # Check each locale file for a match
@@ -93,7 +92,10 @@ class HoverLocales(sublime_plugin.EventListener):
                             if type(file_yaml) is dict:
                                 continue
                             else:
-                                values[locale] = file_yaml
+                                values[locale] = {}
+                                values[locale]["string"] = file_yaml
+                                values[locale]["path"] = file_name
+
                     if len(values) == 0:
                         break
                     html = ""
@@ -103,13 +105,17 @@ class HoverLocales(sublime_plugin.EventListener):
                             html += "<br>"
                         should_break = True
 
-                        html += "<div>"
-                        html += '<span style="color: #f00;">' + key + "</span>" + ": " + value
-                        html += "</div>"
+                        html += '<div><a href="' + value["path"] + '">'
+                        html += '<span style="color: #f00;">' + key + "</span>" + ": " + value["string"]
+                        html += "</a></div>"
+
                     view.show_popup('<div>' + html + '</div>', 
                                          flags=sublime.HIDE_ON_MOUSE_MOVE_AWAY, 
-                                         location=point)
+                                         location=point,
+                                         on_navigate=self.open_locale)
                     break
             return
         return
-        
+
+    def open_locale(object, path):
+        sublime.active_window().open_file(path)
