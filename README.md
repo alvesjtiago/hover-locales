@@ -1,6 +1,9 @@
 # Hover Locales
 
 A Sublime Text 3 plugin to show different rails locale strings simply by hovering on a localized string.
+(This is a work in progress and the search of every file is still very slow.)
+
+![Screenshot of Hover Locales, a plugin for Sublime Text 3 by @alvesjtiago](http://i.imgur.com/FJhzzYP.png)
 
 ## Installation
 
