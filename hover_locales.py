@@ -69,13 +69,13 @@ class HoverLocales(sublime_plugin.EventListener):
             path = path.strip().split('/')[-1]
 
             # Get base project folder
-            base_folder = sublime.active_window().folders()[0] + "/config/locales"
+            base_folder = os.path.join(sublime.active_window().folders()[0], "config", "locales")
 
             if (path and path != "" and os.path.isdir(base_folder)):
+                values = {}
 
                 # Check each locale file for a match
                 for root, dirs, files in os.walk(base_folder):
-                    values = {}
                     for file in files:
                         if file.endswith("yml"):
                             file_name = os.path.join(root, file)
@@ -96,24 +96,23 @@ class HoverLocales(sublime_plugin.EventListener):
                                 values[locale]["string"] = file_yaml
                                 values[locale]["path"] = file_name
 
-                    if len(values) == 0:
-                        break
-                    html = ""
-                    should_break = False
-                    for key, value in values.items():
-                        if should_break:
-                            html += "<br>"
-                        should_break = True
+                if len(values) == 0:
+                    return
+                html = ""
+                should_break = False
+                for key, value in values.items():
+                    if should_break:
+                        html += "<br>"
+                    should_break = True
 
-                        html += '<div><a href="' + value["path"] + '">'
-                        html += '<span style="color: #f00;">' + key + "</span>" + ": " + value["string"]
-                        html += "</a></div>"
+                    html += '<div><a href="' + value["path"] + '">'
+                    html += '<span style="color: #f00;">' + key + "</span>" + ": " + value["string"]
+                    html += "</a></div>"
 
-                    view.show_popup('<div>' + html + '</div>', 
-                                         flags=sublime.HIDE_ON_MOUSE_MOVE_AWAY, 
-                                         location=point,
-                                         on_navigate=self.open_locale)
-                    break
+                view.show_popup('<div>' + html + '</div>', 
+                                     flags=sublime.HIDE_ON_MOUSE_MOVE_AWAY, 
+                                     location=point,
+                                     on_navigate=self.open_locale)
             return
         return
 
