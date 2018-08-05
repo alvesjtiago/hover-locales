@@ -4,9 +4,15 @@ import os
 import re
 import yaml
 
+SCOPES = [
+  "text.find-in-files",
+  "text.html.ruby",
+  "source.ruby"
+]
+
 class HoverLocales(sublime_plugin.EventListener):
   def on_hover(self, view, point, hover_zone):
-    if (hover_zone == sublime.HOVER_TEXT):
+    if (hover_zone == sublime.HOVER_TEXT and any(scope in view.scope_name(point) for scope in SCOPES)):
       hovered_line_text = view.substr(view.line(point)).strip()
 
       next_double_quote = view.find('"', point).a
