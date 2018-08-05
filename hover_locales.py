@@ -4,15 +4,11 @@ import os
 import re
 import yaml
 
-SCOPES = [
-  "text.find-in-files",
-  "text.html.ruby",
-  "source.ruby"
-]
-
 class HoverLocales(sublime_plugin.EventListener):
   def on_hover(self, view, point, hover_zone):
-    if (hover_zone == sublime.HOVER_TEXT and any(scope in view.scope_name(point) for scope in SCOPES)):
+    settings = sublime.load_settings('Hover Locales.sublime-settings')
+    scopes = settings.get("scopes")
+    if (hover_zone == sublime.HOVER_TEXT and any(scope in view.scope_name(point) for scope in scopes)):
       hovered_line_text = view.substr(view.line(point)).strip()
 
       next_double_quote = view.find('"', point).a
@@ -72,7 +68,7 @@ class HoverLocales(sublime_plugin.EventListener):
       path = path.strip().split('/')[-1]
 
       # Get base project folder
-      base_folder = os.path.join(sublime.active_window().folders()[0], "config", "locales")
+      base_folder = os.path.join(sublime.active_window().folders()[0], settings.get("locales_path"))
 
       if (path and path != "" and os.path.isdir(base_folder)):
         values = {}

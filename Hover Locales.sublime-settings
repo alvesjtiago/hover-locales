@@ -1,0 +1,4 @@
+{
+    "scopes": ["text.find-in-files", "text.html.ruby", "source.ruby"],
+    "locales_path": "config/locales"
+}
