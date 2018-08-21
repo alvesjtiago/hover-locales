@@ -73,7 +73,37 @@ class HoverLocales(sublime_plugin.EventListener):
       if (path and path != "" and os.path.isdir(base_folder)):
         values = {}
 
+        # Check if file is under views in Rails
+        if view.file_name():
+          if path.startswith("."):
+            relative_path = view.file_name().split('views/')[-1].split('.')[0]
+            path_split = relative_path.split('/')
+            path_split.append(path.split('.')[1])
+
+            # Check each locale file for a match
+            for root, dirs, files in os.walk(base_folder):
+              for file in files:
+                if file.endswith("yml"):
+                  file_name = os.path.join(root, file)
+                  with open(file_name, "rb") as file:
+                    raw_yaml = yaml.load(file.read())
+                    locale = list(raw_yaml.keys())[0]
+
+                    file_yaml = raw_yaml[locale]
+                    for path_section in path_split:
+                      try:
+                        file_yaml = file_yaml[path_section]
+                      except:
+                        break
+                    if type(file_yaml) is dict:
+                      continue
+                    else:
+                      values[locale] = {}
+                      values[locale]["string"] = file_yaml
+                      values[locale]["path"] = file_name
+
         # Check each locale file for a match
+        path_split = path.split('.')
         for root, dirs, files in os.walk(base_folder):
           for file in files:
             if file.endswith("yml"):
@@ -81,7 +111,6 @@ class HoverLocales(sublime_plugin.EventListener):
               with open(file_name, "rb") as file:
                 raw_yaml = yaml.load(file.read())
                 locale = list(raw_yaml.keys())[0]
-                path_split = path.split('.')
 
                 file_yaml = raw_yaml[locale]
                 for path_section in path_split:
