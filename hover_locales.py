@@ -15,7 +15,7 @@ class HoverLocales(sublime_plugin.EventListener):
       next_single_quote = view.find("'", point).a
       next_parentheses  = view.find(r"\)", point).a
 
-      symbols_dict = { next_double_quote: '"', 
+      symbols_dict = { next_double_quote: '"',
                        next_single_quote: "'",
                        next_parentheses: ')' }
 
@@ -118,7 +118,9 @@ class HoverLocales(sublime_plugin.EventListener):
                     file_yaml = file_yaml[path_section]
                   except:
                     break
-                if type(file_yaml) is dict:
+                if file_yaml is None:
+                  continue
+                elif type(file_yaml) is dict:
                   continue
                 else:
                   values[locale] = {}
@@ -134,12 +136,15 @@ class HoverLocales(sublime_plugin.EventListener):
             html += "<br>"
           should_break = True
 
-          html += '<div><a href="' + value["path"] + '">'
-          html += '<span style="color: #f00;">' + key + "</span>" + ": " + value["string"]
-          html += "</a></div>"
+          value_string = '' if value["string"] is None else value["string"]
+          value_path = '' if value["path"] is None else value["path"]
 
-        view.show_popup('<div>' + html + '</div>', 
-                   flags=sublime.HIDE_ON_MOUSE_MOVE_AWAY, 
+          html += '<div><a href="' + value_path + '">'
+          html += '<span style="color: #f00">' + key + '</span>' + ': ' + value_string
+          html += '</a></div>'
+
+        view.show_popup('<div>' + html + '</div>',
+                   flags=sublime.HIDE_ON_MOUSE_MOVE_AWAY,
                    location=point,
                    on_navigate=self.open_locale)
       return
