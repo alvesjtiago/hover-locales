@@ -86,7 +86,7 @@ class HoverLocales(sublime_plugin.EventListener):
                 if file.endswith("yml"):
                   file_name = os.path.join(root, file)
                   with open(file_name, "rb") as file:
-                    raw_yaml = yaml.load(file.read())
+                    raw_yaml = yaml.load(file.read(), Loader=yaml.FullLoader)
                     locale = list(raw_yaml.keys())[0]
 
                     file_yaml = raw_yaml[locale]
@@ -109,7 +109,7 @@ class HoverLocales(sublime_plugin.EventListener):
             if file.endswith("yml"):
               file_name = os.path.join(root, file)
               with open(file_name, "rb") as file:
-                raw_yaml = yaml.load(file.read())
+                raw_yaml = yaml.load(file.read(), Loader=yaml.FullLoader)
                 locale = list(raw_yaml.keys())[0]
 
                 file_yaml = raw_yaml[locale]
